@@ -44,6 +44,8 @@ dependencies:
   fluttertoast: ^8.0.9
   shared_preferences: ^2.0.13
   intro_slider: ^2.2.9
+  provider: ^5.0.0
+
 
 #  path_provider: ^1.6.14
 #  localstorage: ^3.0.6
@@ -81,6 +83,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/logo/
 
   fonts:
     - family: AntIcons
