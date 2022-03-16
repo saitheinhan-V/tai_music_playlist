@@ -6,10 +6,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intro_slider/intro_slider.dart';
 import 'package:intro_slider/slide_object.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tai_music/config/color.dart';
 import 'package:tai_music/config/storage_manager.dart';
 import 'package:tai_music/config/url_config.dart';
 import 'package:tai_music/model/user.dart';
+import 'package:tai_music/theme/theme_state.dart';
 import 'package:tai_music/ui/home/home.dart';
 import 'animation/fade_animation.dart';
 import 'package:http/http.dart' as http;
@@ -26,12 +29,25 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.blueGrey,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeState()),
+      ],
+      child: MaterialApp(
+        theme: ThemeData(
+          // primaryColor: Colors.amberAccent,
+          primarySwatch: Colors.green,
+          // brightness: Brightness.dark,
+          // canvasColor: const Color(0xff130f24),
+          // canvasColor: const Color(0xff1D1736),
+          canvasColor: Colors.grey.shade300,
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(backgroundColor: Colors.white),
+          appBarTheme: const AppBarTheme(backgroundColor: Colors.white,toolbarTextStyle: TextStyle(color: Colors.black)),
+
+        ),
+        home:  const Splash(),
+        debugShowCheckedModeBanner: false,
       ),
-      home:  const Splash(),
-      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -73,13 +89,21 @@ class _SplashState extends State<Splash> {
     return  Scaffold(
       body:  Container(
         color: Colors.blueGrey,
-        child: const Center(
-          child: Text('Tai Music Playlist',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 25.0,
-              fontWeight: FontWeight.bold,
-            ),
+        height: MediaQuery.of(context).size.height,
+        child:  Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children:  [
+             Image.asset('assets/logo/ic_main_logo.png',height: 100.0,width: 100.0,),
+              const SizedBox(height: 50.0,),
+              const Text('Tai Music Playlist',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ),
 

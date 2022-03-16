@@ -65,7 +65,7 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
           _pageController.jumpToPage(index);
         },
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         iconSize: 20,
         selectedFontSize: 15.0,
         items: [
