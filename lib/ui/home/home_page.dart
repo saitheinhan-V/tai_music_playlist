@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tai_music/ui/home/artist_page.dart';
 import 'package:tai_music/ui/home/genre_page.dart';
 import 'package:tai_music/ui/home/playlist_page.dart';
@@ -20,6 +22,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     length: categoryList.length,
     vsync: this,
   );
+
+  late DateTime _lastPressed;
 
   final List<String> categoryList = [];
 
@@ -52,208 +56,236 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if (_lastPressed == null ||
+        DateTime.now().difference(_lastPressed) > const Duration(seconds: 1)) {
+      _lastPressed = now;
+      Fluttertoast.showToast(msg: 'Click again to exit');
+      return Future.value(false);
+    }
+    return Future.value(true);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return DefaultTabController(
-      length: categoryList.length,
-      child: Scaffold(
-        body: NestedScrollView(
-          headerSliverBuilder: (BuildContext context, bool innerBoxScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                title: GestureDetector(
-                  onTap: (){
-                    setState(() {
-                      showSearch(context: context, delegate: CustomSearchDelegate());
-                    });
-                  },
-                  child: Container(
-                    width: 400.0,
-                    height: 40.0,
-                    padding: const EdgeInsets.only(left: 10.0),
-                    decoration: BoxDecoration(
-                      border: Border.all(
+    return WillPopScope(
+      onWillPop: () async {
+        final differeance = DateTime.now().difference(_lastPressed);
+        _lastPressed = DateTime.now();
+        if (differeance >= const Duration(seconds: 2)) {
+          const String msg = 'Press the back button to exit';
+          Fluttertoast.showToast(
+            msg: msg,
+          );
+          return false;
+        } else {
+          Fluttertoast.cancel();
+          SystemNavigator.pop();
+          return true;
+        }
+      },
+      child: DefaultTabController(
+        length: categoryList.length,
+        child: Scaffold(
+          body: NestedScrollView(
+            headerSliverBuilder: (BuildContext context, bool innerBoxScrolled) {
+              return <Widget>[
+                SliverAppBar(
+                  title: GestureDetector(
+                    onTap: (){
+                      setState(() {
+                        showSearch(context: context, delegate: CustomSearchDelegate());
+                      });
+                    },
+                    child: Container(
+                      width: 400.0,
+                      height: 40.0,
+                      padding: const EdgeInsets.only(left: 10.0),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey.shade300,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(10.0),
                         color: Colors.grey.shade300,
-                        width: 2.0,
                       ),
-                      borderRadius: BorderRadius.circular(10.0),
-                      color: Colors.grey.shade300,
-                    ),
-                    child: Row(
-                      children: const <Widget>[
-                        Icon(
-                          Icons.search,
-                          color: Colors.black26,
-                        ),
-                        SizedBox(
-                          width: 10.0,
-                        ),
-                        Text(
-                          'Search...',
-                          style: TextStyle(
+                      child: Row(
+                        children: const <Widget>[
+                          Icon(
+                            Icons.search,
                             color: Colors.black26,
-                            fontSize: 15.0,
                           ),
-                        ),
-                      ],
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            'Search...',
+                            style: TextStyle(
+                              color: Colors.black26,
+                              fontSize: 15.0,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                pinned: true,
-                floating: true,
-                snap: false,
-                forceElevated: innerBoxScrolled,
-                bottom: TabBar(
-                    // isScrollable: true,
-                    controller: tabController,
-                    labelColor: Colors.green,
-                    // labelStyle: theme.textTheme.headline1,
-                    indicatorColor: Colors.green,
-                    unselectedLabelColor: Colors.grey,
-                    tabs: List.generate(
-                        categoryList.length,
-                        (index) => Tab(
-                              text: categoryList[index],
-                            )
-                    )
-                ),
-              )
-            ];
-          },
-          body: TabBarView(
-            controller: tabController,
-            children: List.generate(categoryList.length, (index) => pages[index]),
+                  pinned: true,
+                  floating: true,
+                  snap: false,
+                  forceElevated: innerBoxScrolled,
+                  bottom: TabBar(
+                      // isScrollable: true,
+                      controller: tabController,
+                      labelColor: Colors.green,
+                      // labelStyle: theme.textTheme.headline1,
+                      indicatorColor: Colors.green,
+                      unselectedLabelColor: Colors.grey,
+                      tabs: List.generate(
+                          categoryList.length,
+                          (index) => Tab(
+                                text: categoryList[index],
+                              )
+                      )
+                  ),
+                )
+              ];
+            },
+            body: TabBarView(
+              controller: tabController,
+              children: List.generate(categoryList.length, (index) => pages[index]),
+            ),
           ),
         ),
-      ),
-       // child:
+         // child:
 /*
-           CustomScrollView(
-             slivers: [
-               SliverAppBar(
-                 title: GestureDetector(
-                   onTap: () => {},
-                   //     showSearch(
-                   //   context: context,
-                   //   delegate: CustomSearchDelegate()
-                   // ),
-                   child: Container(
-                     width: 400.0,
-                     height: 40.0,
-                     padding: const EdgeInsets.only(left: 10.0),
-                     decoration: BoxDecoration(
-                       border: Border.all(
+             CustomScrollView(
+               slivers: [
+                 SliverAppBar(
+                   title: GestureDetector(
+                     onTap: () => {},
+                     //     showSearch(
+                     //   context: context,
+                     //   delegate: CustomSearchDelegate()
+                     // ),
+                     child: Container(
+                       width: 400.0,
+                       height: 40.0,
+                       padding: const EdgeInsets.only(left: 10.0),
+                       decoration: BoxDecoration(
+                         border: Border.all(
+                           color: Colors.grey.shade300,
+                           width: 2.0,
+                         ),
+                         borderRadius: BorderRadius.circular(10.0),
                          color: Colors.grey.shade300,
-                         width: 2.0,
                        ),
-                       borderRadius: BorderRadius.circular(10.0),
-                       color: Colors.grey.shade300,
-                     ),
-                     child: Row(
-                       children: const <Widget>[
-                         Icon(
-                           Icons.search,
-                           color: Colors.black26,
-                         ),
-                         SizedBox(
-                           width: 10.0,
-                         ),
-                         Text(
-                           'Search...',
-                           style: TextStyle(
+                       child: Row(
+                         children: const <Widget>[
+                           Icon(
+                             Icons.search,
                              color: Colors.black26,
-                             fontSize: 15.0,
                            ),
-                         ),
-                       ],
+                           SizedBox(
+                             width: 10.0,
+                           ),
+                           Text(
+                             'Search...',
+                             style: TextStyle(
+                               color: Colors.black26,
+                               fontSize: 15.0,
+                             ),
+                           ),
+                         ],
+                       ),
                      ),
                    ),
                  ),
-               ),
-               TabBarView(
-                 controller: tabController,
-                 children: List.generate(
-                     categoryList.length,
-                         (index) => pages[index]
+                 TabBarView(
+                   controller: tabController,
+                   children: List.generate(
+                       categoryList.length,
+                           (index) => pages[index]
+                   ),
                  ),
-               ),
-             ],
-           ),
+               ],
+             ),
 */
 /*
-       Scaffold(
-        appBar: AppBar(
-          title:
-          GestureDetector(
-            onTap: () => {},
-            //     showSearch(
-            //   context: context,
-            //   delegate: CustomSearchDelegate()
-            // ),
-            child: Container(
-              width: 400.0,
-              height: 40.0,
-              padding: const EdgeInsets.only(left: 10.0),
-              decoration: BoxDecoration(
-                border: Border.all(
+         Scaffold(
+          appBar: AppBar(
+            title:
+            GestureDetector(
+              onTap: () => {},
+              //     showSearch(
+              //   context: context,
+              //   delegate: CustomSearchDelegate()
+              // ),
+              child: Container(
+                width: 400.0,
+                height: 40.0,
+                padding: const EdgeInsets.only(left: 10.0),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                    width: 2.0,
+                  ),
+                  borderRadius: BorderRadius.circular(10.0),
                   color: Colors.grey.shade300,
-                  width: 2.0,
                 ),
-                borderRadius: BorderRadius.circular(10.0),
-                color: Colors.grey.shade300,
-              ),
-              child: Row(
-                children: const <Widget>[
-                  Icon(
-                    Icons.search,
-                    color: Colors.black26,
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  Text(
-                    'Search...',
-                    style: TextStyle(
+                child: Row(
+                  children: const <Widget>[
+                    Icon(
+                      Icons.search,
                       color: Colors.black26,
-                      fontSize: 15.0,
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      'Search...',
+                      style: TextStyle(
+                        color: Colors.black26,
+                        fontSize: 15.0,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          actions: <Widget>[
-            Theme(
-              data: Theme.of(context).copyWith(
-                cardColor: Colors.black,
+            actions: <Widget>[
+              Theme(
+                data: Theme.of(context).copyWith(
+                  cardColor: Colors.black,
+                ),
+                child: Container(),
               ),
-              child: Container(),
+            ],
+            bottom: TabBar(
+                isScrollable: false,
+                controller: tabController,
+                labelColor: Colors.green,
+                // labelStyle: theme.textTheme.headline1,
+                indicatorColor: Colors.green,
+                unselectedLabelColor: Colors.grey,
+                tabs: List.generate(
+                    categoryList.length,
+                    (index) => Tab(
+                          text: categoryList[index],
+                        ))),
+          ),
+          body: TabBarView(
+            controller: tabController,
+            children: List.generate(
+              categoryList.length,
+              (index) => pages[index]
             ),
-          ],
-          bottom: TabBar(
-              isScrollable: false,
-              controller: tabController,
-              labelColor: Colors.green,
-              // labelStyle: theme.textTheme.headline1,
-              indicatorColor: Colors.green,
-              unselectedLabelColor: Colors.grey,
-              tabs: List.generate(
-                  categoryList.length,
-                  (index) => Tab(
-                        text: categoryList[index],
-                      ))),
-        ),
-        body: TabBarView(
-          controller: tabController,
-          children: List.generate(
-            categoryList.length,
-            (index) => pages[index]
           ),
         ),
-      ),
 */
+      ),
     );
   }
 }

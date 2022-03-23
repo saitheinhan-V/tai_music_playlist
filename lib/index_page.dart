@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:tai_music/model/user.dart';
 import 'package:tai_music/ui/chart/chart.dart';
+import 'package:tai_music/ui/custom_bottom_navigation/bottom_nav_bar_widget.dart';
+import 'package:tai_music/ui/home/bottom_play_widget.dart';
 import 'package:tai_music/ui/home/home.dart';
 import 'package:tai_music/ui/home/home_page.dart';
 import 'package:tai_music/ui/login/login_page.dart';
@@ -26,11 +30,22 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
   final List<Widget> pages = [
     const MainPage(),const ChartPage(),const SettingPage()
   ];
-
+  
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+  }
+
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if (_lastPressed == null ||
+        DateTime.now().difference(_lastPressed) > const Duration(seconds: 1)) {
+      _lastPressed = now;
+      Fluttertoast.showToast(msg: 'Click again to exit');
+      return Future.value(false);
+    }
+    return Future.value(true);
   }
 
   @override
@@ -39,13 +54,19 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
       resizeToAvoidBottomInset: false,
       body: WillPopScope(
         onWillPop: () async {
-          if (_lastPressed == null ||
-              DateTime.now().difference(_lastPressed) > const Duration(seconds: 1)) {
-            //两次点击间隔超过1秒则重新计时
-            _lastPressed = DateTime.now();
+          final differeance = DateTime.now().difference(_lastPressed);
+          _lastPressed = DateTime.now();
+          if (differeance >= const Duration(seconds: 2)) {
+            const String msg = 'Press the back button to exit';
+            Fluttertoast.showToast(
+              msg: msg,
+            );
             return false;
+          } else {
+            Fluttertoast.cancel();
+            SystemNavigator.pop();
+            return true;
           }
-          return true;
         },
         child: PageView.builder(
           itemBuilder: (ctx, index) => pages[index],
@@ -59,7 +80,35 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
           },
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: CustomCupertinoTabBar(
+        bottomPlayWidget: const PlayWidget(),
+        // activeColor: Colors.white,
+        backgroundColor: const Color(0xff1D1736),
+        iconSize: 20,
+        // selectedFontSize: 15.0,
+        onTap: (int index) {
+          _pageController.jumpToPage(index);
+          },
+        currentIndex: _selectedIndex,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(AntIcons.play_video),
+            label: 'Home',
+            activeIcon: Icon(AntIcons.play_video_fill),
+          ),
+          BottomNavigationBarItem(
+            activeIcon: Icon(AntIcons.explore),
+            label: 'Explore',
+            icon: Icon(AntIcons.explore_fill),
+          ),
+          BottomNavigationBarItem(
+            label: 'More',
+            activeIcon: Icon(Icons.settings_applications),
+            icon: Icon(Icons.settings_applications_outlined),
+          ),
+        ],
+      ),
+      /*bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) {
           _pageController.jumpToPage(index);
@@ -86,7 +135,7 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
           //     label: '我的'
           // ),
         ],
-      ),
+      ),*/
 
     );
 
