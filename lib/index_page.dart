@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:tai_music/model/user.dart';
+import 'package:tai_music/provider/local_providers.dart';
 import 'package:tai_music/ui/chart/chart.dart';
 import 'package:tai_music/ui/custom_bottom_navigation/bottom_nav_bar_widget.dart';
 import 'package:tai_music/ui/home/bottom_play_widget.dart';
@@ -29,7 +32,26 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
   late DateTime _lastPressed;
   final List<Widget> pages = [
     const MainPage(),const ChartPage(),const SettingPage()
+
   ];
+
+
+  /*onWillPop: () async {
+
+  final differeance = DateTime.now().difference(_lastPressed);
+  _lastPressed = DateTime.now();
+  if (differeance >= const Duration(seconds: 2)) {
+  const String msg = 'Press the back button to exit';
+  Fluttertoast.showToast(
+  msg: msg,
+  );
+  return false;
+  } else {
+  Fluttertoast.cancel();
+  SystemNavigator.pop();
+  return true;
+  }
+},*/
   
   @override
   void initState() {
@@ -50,38 +72,27 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+
+    final bottomBarState = Provider.of<BottomBarState>(context);
+    final screensState = Provider.of<ScreensState>(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: WillPopScope(
-        onWillPop: () async {
-          final differeance = DateTime.now().difference(_lastPressed);
-          _lastPressed = DateTime.now();
-          if (differeance >= const Duration(seconds: 2)) {
-            const String msg = 'Press the back button to exit';
-            Fluttertoast.showToast(
-              msg: msg,
-            );
-            return false;
-          } else {
-            Fluttertoast.cancel();
-            SystemNavigator.pop();
-            return true;
-          }
+      body: PageView.builder(
+        itemBuilder: (ctx, index) => pages[index],
+        itemCount: pages.length,
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
         },
-        child: PageView.builder(
-          itemBuilder: (ctx, index) => pages[index],
-          itemCount: pages.length,
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
       ),
       bottomNavigationBar: CustomCupertinoTabBar(
-        bottomPlayWidget: const PlayWidget(),
+        // bottomPlayWidget: const PlayWidget(),
+        bottomPlayWidget:  Container(),
+        showBar: bottomBarState.showBottomBar,
         // activeColor: Colors.white,
         backgroundColor: const Color(0xff1D1736),
         iconSize: 20,
@@ -97,9 +108,9 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
             activeIcon: Icon(AntIcons.play_video_fill),
           ),
           BottomNavigationBarItem(
-            activeIcon: Icon(AntIcons.explore),
+            activeIcon: Icon(AntIcons.explore_fill),
             label: 'Explore',
-            icon: Icon(AntIcons.explore_fill),
+            icon: Icon(AntIcons.explore),
           ),
           BottomNavigationBarItem(
             label: 'More',
@@ -108,34 +119,6 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
           ),
         ],
       ),
-      /*bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          _pageController.jumpToPage(index);
-        },
-        type: BottomNavigationBarType.fixed,
-        // backgroundColor: Colors.white,
-        iconSize: 20,
-        selectedFontSize: 15.0,
-        items: [
-          BottomNavigationBarItem(
-              icon: _selectedIndex == 0 ?  const Icon(AntIcons.play_video_fill) :  const Icon(AntIcons.play_video,),
-              label: 'Home'
-          ),
-          BottomNavigationBarItem(
-              icon: _selectedIndex == 1 ?  const Icon(AntIcons.explore_fill) : const Icon(AntIcons.explore,),
-              label: 'Chart'
-          ),
-          BottomNavigationBarItem(
-              icon: _selectedIndex == 2 ? const Icon(Icons.settings_applications) : const Icon(Icons.settings_applications_outlined,),
-              label: 'More'
-          ),
-          // BottomNavigationBarItem(
-          //     icon: _selectedIndex == 3 ?  const Icon(AntIcons.profile_fill) :  const Icon(AntIcons.profile,),
-          //     label: '我的'
-          // ),
-        ],
-      ),*/
 
     );
 

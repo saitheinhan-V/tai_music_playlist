@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:tai_music/config/url_config.dart';
 import 'package:tai_music/model/artist.dart';
@@ -7,12 +8,15 @@ import 'package:tai_music/model/genre.dart';
 import 'package:tai_music/model/playlist.dart';
 import 'package:flutter/material.dart';
 
+
 class ApiService{
 
   //get all artist list
   static Future<List<Artist>> getArtistList() async {
     late List<Artist> lists = [];
-    var response = await http.get(Uri.parse(UrlConfig.getArtistListUrl));
+    // var response = await Dio().get(UrlConfig.getArtistListUrl);
+    var response = await http.get(Uri.parse(UrlConfig.mongoGetArtistList));
+    print('REsponse > ${response.body}');
 
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
@@ -26,7 +30,6 @@ class ApiService{
           lists.add(artist);
           print('Artist value >' + artist.toString());
         }*/
-        
         lists = (body['data'] as List).map((e) => Artist.fromJson(e)).toList();
       }
     } else {
@@ -42,7 +45,7 @@ class ApiService{
   static Future<List<Playlist>> getAllPlaylist() async{
     late List<Playlist> playlists = [];
     
-    var response = await http.get(Uri.parse(UrlConfig.getAllPlaylist));
+    var response = await http.get(Uri.parse(UrlConfig.mongoGetAllPlaylist));
 
     if(response.statusCode == 200){
       var body = jsonDecode(response.body);
@@ -58,22 +61,24 @@ class ApiService{
           var size = 0;
 
           if(apiPlaylist.songIdList.isNotEmpty) {
-            size = apiPlaylist.songIdList.split(',').length;
+            var split = apiPlaylist.songIdList.trim().split(',');
+            for(String s in split){
+              if(s.trim().isNotEmpty) size += 1;
+            }
           }
 
           late Playlist playlist;
 
           if(name == 'New Playlist'){
-            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, -1, apiPlaylist.songIdList, Icons.add);
+            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, -1, apiPlaylist.songIdList.toString(), Icons.add);
           }else if(name == 'Liked Songs'){
-            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, size, apiPlaylist.songIdList, Icons.favorite);
+            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, size, apiPlaylist.songIdList.toString(), Icons.favorite);
           }else if(name == 'Most Played'){
-            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, size, apiPlaylist.songIdList, Icons.star);
+            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, size, apiPlaylist.songIdList.toString(), Icons.star);
           }else if(name == 'Recent Played'){
-            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, size, apiPlaylist.songIdList, Icons.history_toggle_off_sharp);
+            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, size, apiPlaylist.songIdList.toString(), Icons.history_toggle_off_sharp);
           }else{
-            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, size, apiPlaylist.songIdList, Icons.fiber_new);
-
+            playlist = Playlist(apiPlaylist.playlistId, apiPlaylist.playlistName, size, apiPlaylist.songIdList.toString(), Icons.fiber_new);
           }
 
           playlists.add(playlist);
@@ -143,16 +148,18 @@ class ApiService{
   static Future<List<Genre>> getAllGenres() async{
     late List<Genre> genreList = [];
 
-    var response = await http.get(Uri.parse(UrlConfig.getAllGenres));
+    var response = await http.get(Uri.parse(UrlConfig.mongoGetAllGenre));
 
     if(response.statusCode == 200 ){
       var body = jsonDecode(response.body);
       print('Genres >> $body');
+
       var msg = body['message'];
       var data = body['data'];
-      for(var i=0; i<data.length; i++){
-        genreList.add(Genre.fromJson(data[i]));
-      }
+      // for(var i=0; i<data.length; i++){
+      //   genreList.add(Genre.fromJson(data[i]));
+      // }
+      genreList = (data as List).map((e) => Genre.fromJson(e)).toList();
 
     }else{
       throw Exception('Failed to load data');

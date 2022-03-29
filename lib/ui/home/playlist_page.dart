@@ -46,11 +46,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
     return Scaffold(
         body: CustomScrollView(
-      physics:
+            physics:
           const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-      slivers: [
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
+          slivers: [
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
               return index != 0
                   ? ListTile(

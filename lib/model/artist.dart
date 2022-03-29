@@ -6,7 +6,7 @@ class Artist{
 
   Artist(this.artistId, this.artistName, this.artistProfile);
 
-  Artist.fromJson(Map<String, dynamic> data) {
+  Artist.fromJson(Map<dynamic, dynamic> data) {
     artistId = data['artistId'];
     artistName = data['artistName'];
     artistProfile = data['artistProfile'];

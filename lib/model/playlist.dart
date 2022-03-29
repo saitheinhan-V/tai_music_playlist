@@ -4,7 +4,7 @@ class Playlist{
   late int id;
   late String name;
   late int songCount;
-  late String songList;
+  late String songList = "";
   late IconData iconData;
 
   Playlist(this.id, this.name, this.songCount, this.songList, this.iconData);
@@ -14,7 +14,7 @@ class Playlist{
 class ApiPlaylist{
   late int playlistId;
   late int userId;
-  late String songIdList;
+  late String songIdList = "";
   late String playlistName;
   late String createdDate;
 

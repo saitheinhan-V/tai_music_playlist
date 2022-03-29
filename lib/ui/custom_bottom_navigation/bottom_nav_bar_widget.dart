@@ -6,6 +6,7 @@ import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:tai_music/utils/responsive.dart';
 
 // Standard iOS 10 tab bar height.
 
@@ -34,6 +35,7 @@ class CustomCupertinoTabBar extends StatelessWidget
         width: 0.0, // 0.0 means one physical pixel
       ),
     ),
+    this.showBar = true
   })  : assert(
           items.length >= 2,
           "Tabs need at least 2 items to conform to Apple's HIG",
@@ -52,6 +54,7 @@ class CustomCupertinoTabBar extends StatelessWidget
   final Color inactiveColor;
   final double iconSize;
   final Border? border;
+  final bool showBar;
 
   @override
   Size get preferredSize => const Size.fromHeight(100);
@@ -69,6 +72,10 @@ class CustomCupertinoTabBar extends StatelessWidget
   Widget build(BuildContext context) {
     assert(debugCheckHasMediaQuery(context));
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    const _duration = Duration(milliseconds: 500);
+    const double _bottomBarHide = -100.0;
+    const double _bottomBarShow = 0.0;
 
     // final Color backgroundColor = CupertinoDynamicColor.resolve(
     //   this.backgroundColor ?? CupertinoTheme.of(context).barBackgroundColor,
@@ -94,53 +101,58 @@ class CustomCupertinoTabBar extends StatelessWidget
 
     final Color inactive =
         CupertinoDynamicColor.resolve(inactiveColor, context);
-    Widget result = DecoratedBox(
-      decoration: BoxDecoration(
-        border: resolvedBorder,
-        color: backgroundColor,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          bottomPlayWidget,
-          Container(
-            child: IconTheme.merge(
-              // Default with the inactive state.
-              data: IconThemeData(color: inactive, size: iconSize),
-              child: DefaultTextStyle(
-                // Default with the inactive state.
-                style: CupertinoTheme.of(context)
-                    .textTheme
-                    .tabLabelTextStyle
-                    .copyWith(color: inactive),
-                child: Semantics(
-                  explicitChildNodes: true,
-                  child: ClipRRect(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
-                      child: Container(
-                        // color: Colors.black.withOpacity(.7),
-                        color: backgroundColor,
-                        padding:
+
+    final responsive = Responsive.of(context);
+
+    return SizedBox(
+        height: showBar? 60.0 : responsive.heightPercent(0),
+        // width: MediaQuery.of(context).size.width,
+        child: AnimatedPositioned(
+          bottom: showBar? _bottomBarShow : _bottomBarHide,
+          width: MediaQuery.of(context).size.width,
+          duration: _duration,
+          curve:  Curves.bounceIn,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // bottomPlayWidget,
+              Container(
+                child: IconTheme.merge(
+                  // Default with the inactive state.
+                  data: IconThemeData(color: inactive, size: iconSize),
+                  child: DefaultTextStyle(
+                    // Default with the inactive state.
+                    style: CupertinoTheme.of(context)
+                        .textTheme
+                        .tabLabelTextStyle
+                        .copyWith(color: inactive),
+                    child: Semantics(
+                      explicitChildNodes: true,
+                      child: ClipRRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
+                          child: Container(
+                            // color: Colors.black.withOpacity(.7),
+                            color: backgroundColor,
+                            padding:
                             EdgeInsets.only(bottom: bottomPadding, top: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: _buildTabItems(context),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: _buildTabItems(context),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
+        )
     );
-
-    return result;
   }
 
   List<Widget> _buildTabItems(BuildContext context) {

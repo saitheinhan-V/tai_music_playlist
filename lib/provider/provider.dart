@@ -14,6 +14,7 @@ class ArtistProvider extends ChangeNotifier{
   loadData() async {
     //return await ApiService.getArtistList();
     artistList = await ApiService.getArtistList();
+    print('AFTER >> = $artistList');
     notifyListeners();
   }
 

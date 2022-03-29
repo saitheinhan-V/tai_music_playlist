@@ -4,16 +4,16 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
 
   final cities=[
-    'Myanmar','Malaysia','Singapore','Vietnam','Burma','Australia',
+    'Myanmar','Malaysia','Singapore','Vietnam','Australia',
     'America','Burma','Hungary','Holland','Zambia','Thailand','Tanzania','Japan','Korea','Cambodia',
     'Cameron','China','Denmark','Egypt','England','Finland','France','Greece','Italy','Portugal',
-    'Russia','Switzerland','Netherland','USA',
+    'Russia','Switzerland','Netherland','USA','Yale'
   ];
   final recentCities=[
     'Myanmar','Malaysia','Singapore','Vietnam','Burma','Australia',
   ];
 
-  late bool hasQuery;
+  late bool hasQuery = false;
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -24,6 +24,8 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         onPressed: () {
           query = '';
           hasQuery=false;
+          // showResults(context);
+          showSuggestions(context);
         },
       ),
     ];
@@ -45,7 +47,9 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return hasQuery? Container(
+    print('Query $hasQuery');
+    return hasQuery?
+    Container(
       width: 100.0,
       height: 100.0,
       color: Colors.red,
@@ -59,37 +63,77 @@ class CustomSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
 
-    final suggestionList = query.isEmpty? recentCities: cities.where((p) => p.startsWith(query)).toList();
+    final suggestionList = query.isEmpty? recentCities: cities.where((p) => p.toLowerCase().contains(query)).toList();
+    var showSuggestionList = suggestionList.map((e) => e.toLowerCase()).toList();
+    hasQuery = query.isEmpty? false : true;
+    //p.startWith(query)
+    var startIndex = 0;
+    var endIndex = 0;
+    var currentString = '';
+    print('Suggestion >>> $suggestionList');
 
     return ListView.builder(
       itemCount: suggestionList.length,
       itemBuilder: (BuildContext context,int index){
+        currentString = showSuggestionList[index];
+        startIndex = hasQuery? currentString.indexOf(query,0) : 0;
+        endIndex = startIndex + query.length;
+        print("Start >> $startIndex >> End $endIndex >> Value ${showSuggestionList[index].indexOf('a',0)}");
         return ListTile(
           onTap: (){
             query=suggestionList[index];
             hasQuery=true;
-            recentCities.add(suggestionList[index]);
+            !recentCities.contains(suggestionList[index]) ? recentCities.add(suggestionList[index]) : null;
             showResults(context);
           },
-          leading: Icon(Icons.location_city),
-          title: RichText(
-            text: TextSpan(
-              text: suggestionList[index].substring(0,query.length),
-              style: TextStyle(
-                color: Colors.black,
+          leading: const Icon(Icons.location_city),
+          title: hasQuery ? RichText(
+            text: startIndex==0 ? TextSpan(
+              text: suggestionList[index].substring(startIndex,endIndex),
+              style: const TextStyle(
+                color: Colors.green,
                 fontWeight: FontWeight.bold,
               ),
               children: [
-                TextSpan(
-                  text: suggestionList[index].substring(query.length),
-                  style: TextStyle(
+                suggestionList[index].length> endIndex ? TextSpan(
+                  text: suggestionList[index].substring(endIndex,suggestionList[index].length),
+                  style: const TextStyle(
                     color: Colors.grey,
                   ),
-                ),
+                ) : const TextSpan(text: ""),
               ],
+            ) : TextSpan(
+              text: suggestionList[index].substring(0,startIndex),
+              style: const TextStyle(
+                color: Colors.grey,
+              ),
+              children: [
+                TextSpan(
+                  text: suggestionList[index].substring(startIndex,endIndex),
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                suggestionList[index].length > endIndex ? TextSpan(
+                  text: suggestionList[index].substring(endIndex,suggestionList[index].length),
+                  style: const TextStyle(
+                    color: Colors.grey,
+                  ),
+                ) : const TextSpan(
+                  text: ''
+                )
+              ]
             ),
-          ),
-          trailing: Icon(Icons.subdirectory_arrow_right),
+          )
+          : RichText(
+              text: TextSpan(
+                text: suggestionList[index],
+                style: const TextStyle(
+                    color: Colors.grey,
+                  ),
+                )),
+          trailing: const Icon(Icons.subdirectory_arrow_right),
         );
       },
     );

@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:tai_music/provider/local_providers.dart';
 import 'package:tai_music/ui/home/artist_page.dart';
 import 'package:tai_music/ui/home/genre_page.dart';
 import 'package:tai_music/ui/home/playlist_page.dart';
@@ -22,6 +25,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     length: categoryList.length,
     vsync: this,
   );
+
+  final _scrollController = ScrollController();
 
   late DateTime _lastPressed;
 
@@ -53,6 +58,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   void dispose() {
     tabController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -65,6 +71,25 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       return Future.value(false);
     }
     return Future.value(true);
+  }
+
+  late bool _showBottomBar;
+
+  void _showBottomBarByScroll(BuildContext context) {
+    final bottomBarState = Provider.of<BottomBarState>(context, listen: false);
+
+    _showBottomBar = bottomBarState.showBottomBar;
+
+    if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.reverse &&
+        _showBottomBar) {
+      bottomBarState.showBottomBar = false;
+    } else if (_scrollController.position.userScrollDirection ==
+        ScrollDirection.forward &&
+        !_showBottomBar) {
+      bottomBarState.showBottomBar = true;
+
+    }
   }
 
   @override
@@ -90,72 +115,81 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       child: DefaultTabController(
         length: categoryList.length,
         child: Scaffold(
-          body: NestedScrollView(
-            headerSliverBuilder: (BuildContext context, bool innerBoxScrolled) {
-              return <Widget>[
-                SliverAppBar(
-                  title: GestureDetector(
-                    onTap: (){
-                      setState(() {
-                        showSearch(context: context, delegate: CustomSearchDelegate());
-                      });
-                    },
-                    child: Container(
-                      width: 400.0,
-                      height: 40.0,
-                      padding: const EdgeInsets.only(left: 10.0),
-                      decoration: BoxDecoration(
-                        border: Border.all(
+          body: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              _showBottomBarByScroll(context);
+              return true;
+            },
+            child: NestedScrollView(
+              controller: _scrollController,
+              headerSliverBuilder: (BuildContext context, bool innerBoxScrolled) {
+                return <Widget>[
+                  SliverAppBar(
+                    title: GestureDetector(
+                      onTap: (){
+                        setState(() {
+                          showSearch(context: context, delegate: CustomSearchDelegate());
+                        });
+                      },
+                      child: Container(
+                        width: 400.0,
+                        height: 40.0,
+                        padding: const EdgeInsets.only(left: 10.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey.shade300,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(10.0),
                           color: Colors.grey.shade300,
-                          width: 2.0,
                         ),
-                        borderRadius: BorderRadius.circular(10.0),
-                        color: Colors.grey.shade300,
-                      ),
-                      child: Row(
-                        children: const <Widget>[
-                          Icon(
-                            Icons.search,
-                            color: Colors.black26,
-                          ),
-                          SizedBox(
-                            width: 10.0,
-                          ),
-                          Text(
-                            'Search...',
-                            style: TextStyle(
+                        child: Row(
+                          children: const <Widget>[
+                            Icon(
+                              Icons.search,
                               color: Colors.black26,
-                              fontSize: 15.0,
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text(
+                              'Search...',
+                              style: TextStyle(
+                                color: Colors.black26,
+                                fontSize: 15.0,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  pinned: true,
-                  floating: true,
-                  snap: false,
-                  forceElevated: innerBoxScrolled,
-                  bottom: TabBar(
-                      // isScrollable: true,
-                      controller: tabController,
-                      labelColor: Colors.green,
-                      // labelStyle: theme.textTheme.headline1,
-                      indicatorColor: Colors.green,
-                      unselectedLabelColor: Colors.grey,
-                      tabs: List.generate(
-                          categoryList.length,
-                          (index) => Tab(
-                                text: categoryList[index],
-                              )
-                      )
-                  ),
-                )
-              ];
-            },
-            body: TabBarView(
-              controller: tabController,
-              children: List.generate(categoryList.length, (index) => pages[index]),
+                    pinned: true,
+                    floating: true,
+                    snap: false,
+                    forceElevated: innerBoxScrolled,
+                    bottom: TabBar(
+                        // isScrollable: true,
+                        controller: tabController,
+                        labelColor: Colors.green,
+                        // labelStyle: theme.textTheme.headline1,
+                        indicatorColor: Colors.green,
+                        unselectedLabelColor: Colors.grey,
+                        tabs: List.generate(
+                            categoryList.length,
+                            (index) => Tab(
+                                  text: categoryList[index],
+                                )
+                        )
+                    ),
+                  )
+                ];
+              },
+              body: TabBarView(
+                controller: tabController,
+                children: List.generate(
+                    categoryList.length, (index) => pages[index]
+                ),
+              ),
             ),
           ),
         ),

@@ -2,6 +2,8 @@ class UrlConfig {
 
   static const String baseUrl = "http://192.168.60.182:5001";
 
+  //using mysql local
+
   static const String registerUrl = "$baseUrl/api/user/newRegister";
 
   static const String loginUrl = '$baseUrl/api/user/login';
@@ -19,6 +21,13 @@ class UrlConfig {
   static const String removePlaylist = '$baseUrl/api/remove/playlist';
 
   static const String getAllGenres = '$baseUrl/api/all/genres';
+
+  //using mongo
+  static const String mongoGetArtistList = '$baseUrl/api/mongo/list/artist';
+
+  static const String mongoGetAllPlaylist = '$baseUrl/api/mongo/list/playlist';
+
+  static const String mongoGetAllGenre = '$baseUrl/api/mongo/list/genre';
 
 
 }

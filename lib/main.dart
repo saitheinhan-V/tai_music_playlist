@@ -13,6 +13,7 @@ import 'package:tai_music/config/storage_manager.dart';
 import 'package:tai_music/config/url_config.dart';
 import 'package:tai_music/model/user.dart';
 import 'package:tai_music/provider/audio_provider.dart';
+import 'package:tai_music/provider/local_providers.dart';
 import 'package:tai_music/provider/provider.dart';
 import 'package:tai_music/theme/theme_state.dart';
 import 'package:tai_music/ui/home/home.dart';
@@ -38,6 +39,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => PlaylistProvider()),
         ChangeNotifierProvider(create: (_) => GenreProvider()),
         ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => BottomBarState()),
+        ChangeNotifierProvider(create: (_) => ScreensState()),
+
 
       ],
       child: MaterialApp(
