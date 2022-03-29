@@ -12,6 +12,9 @@ import 'package:tai_music/config/color.dart';
 import 'package:tai_music/config/storage_manager.dart';
 import 'package:tai_music/config/url_config.dart';
 import 'package:tai_music/model/user.dart';
+import 'package:tai_music/provider/audio_provider.dart';
+import 'package:tai_music/provider/local_providers.dart';
+import 'package:tai_music/provider/provider.dart';
 import 'package:tai_music/theme/theme_state.dart';
 import 'package:tai_music/ui/home/home.dart';
 import 'animation/fade_animation.dart';
@@ -32,17 +35,25 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeState()),
+        ChangeNotifierProvider(create: (_) => ArtistProvider()),
+        ChangeNotifierProvider(create: (_) => PlaylistProvider()),
+        ChangeNotifierProvider(create: (_) => GenreProvider()),
+        ChangeNotifierProvider(create: (_) => AudioProvider()),
+        ChangeNotifierProvider(create: (_) => BottomBarState()),
+        ChangeNotifierProvider(create: (_) => ScreensState()),
+
+
       ],
       child: MaterialApp(
         theme: ThemeData(
           // primaryColor: Colors.amberAccent,
           primarySwatch: Colors.green,
-          // brightness: Brightness.dark,
-          // canvasColor: const Color(0xff130f24),
+          brightness: Brightness.dark,
+          canvasColor: const Color(0xff130f24),
           // canvasColor: const Color(0xff1D1736),
-          canvasColor: Colors.grey.shade300,
-          bottomNavigationBarTheme: const BottomNavigationBarThemeData(backgroundColor: Colors.white),
-          appBarTheme: const AppBarTheme(backgroundColor: Colors.white,toolbarTextStyle: TextStyle(color: Colors.black)),
+          // canvasColor: Colors.grey.shade300,
+          bottomNavigationBarTheme: const BottomNavigationBarThemeData(backgroundColor: Color(0xff1D1736),selectedItemColor: Colors.green),
+          appBarTheme: const AppBarTheme(backgroundColor: Color(0xff1D1736),toolbarTextStyle: TextStyle(color: Colors.black)),
 
         ),
         home:  const Splash(),
@@ -68,11 +79,11 @@ class _SplashState extends State<Splash> {
 
     if (_seen) {
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => new IndexPage()));
+          MaterialPageRoute(builder: (context) =>  const IndexPage()));
     } else {
       await prefs.setBool('seen', true);
       Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => new IntroScreen()));
+          MaterialPageRoute(builder: (context) =>  const IntroScreen()));
     }
   }
 
@@ -88,7 +99,7 @@ class _SplashState extends State<Splash> {
   Widget build(BuildContext context) {
     return  Scaffold(
       body:  Container(
-        color: Colors.blueGrey,
+        color: const Color(0xff130f24),
         height: MediaQuery.of(context).size.height,
         child:  Center(
           child: Column(

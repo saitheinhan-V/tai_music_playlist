@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:tai_music/model/user.dart';
+import 'package:tai_music/provider/local_providers.dart';
 import 'package:tai_music/ui/chart/chart.dart';
+import 'package:tai_music/ui/custom_bottom_navigation/bottom_nav_bar_widget.dart';
+import 'package:tai_music/ui/home/bottom_play_widget.dart';
 import 'package:tai_music/ui/home/home.dart';
 import 'package:tai_music/ui/home/home_page.dart';
 import 'package:tai_music/ui/login/login_page.dart';
@@ -25,66 +32,91 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
   late DateTime _lastPressed;
   final List<Widget> pages = [
     const MainPage(),const ChartPage(),const SettingPage()
+
   ];
 
+
+  /*onWillPop: () async {
+
+  final differeance = DateTime.now().difference(_lastPressed);
+  _lastPressed = DateTime.now();
+  if (differeance >= const Duration(seconds: 2)) {
+  const String msg = 'Press the back button to exit';
+  Fluttertoast.showToast(
+  msg: msg,
+  );
+  return false;
+  } else {
+  Fluttertoast.cancel();
+  SystemNavigator.pop();
+  return true;
+  }
+},*/
+  
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
   }
 
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if (_lastPressed == null ||
+        DateTime.now().difference(_lastPressed) > const Duration(seconds: 1)) {
+      _lastPressed = now;
+      Fluttertoast.showToast(msg: 'Click again to exit');
+      return Future.value(false);
+    }
+    return Future.value(true);
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    final bottomBarState = Provider.of<BottomBarState>(context);
+    final screensState = Provider.of<ScreensState>(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: WillPopScope(
-        onWillPop: () async {
-          if (_lastPressed == null ||
-              DateTime.now().difference(_lastPressed) > const Duration(seconds: 1)) {
-            //两次点击间隔超过1秒则重新计时
-            _lastPressed = DateTime.now();
-            return false;
-          }
-          return true;
+      body: PageView.builder(
+        itemBuilder: (ctx, index) => pages[index],
+        itemCount: pages.length,
+        controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
         },
-        child: PageView.builder(
-          itemBuilder: (ctx, index) => pages[index],
-          itemCount: pages.length,
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          _pageController.jumpToPage(index);
-        },
-        type: BottomNavigationBarType.fixed,
-        // backgroundColor: Colors.white,
+      bottomNavigationBar: CustomCupertinoTabBar(
+        // bottomPlayWidget: const PlayWidget(),
+        bottomPlayWidget:  Container(),
+        showBar: bottomBarState.showBottomBar,
+        // activeColor: Colors.white,
+        backgroundColor: const Color(0xff1D1736),
         iconSize: 20,
-        selectedFontSize: 15.0,
-        items: [
+        // selectedFontSize: 15.0,
+        onTap: (int index) {
+          _pageController.jumpToPage(index);
+          },
+        currentIndex: _selectedIndex,
+        items: const [
           BottomNavigationBarItem(
-              icon: _selectedIndex == 0 ?  const Icon(AntIcons.play_video_fill) :  const Icon(AntIcons.play_video,),
-              label: 'Home'
+            icon: Icon(AntIcons.play_video),
+            label: 'Home',
+            activeIcon: Icon(AntIcons.play_video_fill),
           ),
           BottomNavigationBarItem(
-              icon: _selectedIndex == 1 ?  const Icon(AntIcons.explore_fill) : const Icon(AntIcons.explore,),
-              label: 'Chart'
+            activeIcon: Icon(AntIcons.explore_fill),
+            label: 'Explore',
+            icon: Icon(AntIcons.explore),
           ),
           BottomNavigationBarItem(
-              icon: _selectedIndex == 2 ? const Icon(Icons.settings_applications) : const Icon(Icons.settings_applications_outlined,),
-              label: 'More'
+            label: 'More',
+            activeIcon: Icon(Icons.settings_applications),
+            icon: Icon(Icons.settings_applications_outlined),
           ),
-          // BottomNavigationBarItem(
-          //     icon: _selectedIndex == 3 ?  const Icon(AntIcons.profile_fill) :  const Icon(AntIcons.profile,),
-          //     label: '我的'
-          // ),
         ],
       ),
 
