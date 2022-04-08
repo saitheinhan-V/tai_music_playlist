@@ -1,0 +1,50 @@
+{
+  "@@locale": "en",
+  "homeTitle" : "Home",
+  "exploreTitle" : "Explore",
+  "moreTitle" : "More",
+  "language": "Language",
+  "myanmar" : "Myanmar",
+  "english" : "English",
+  "artists" : "Artists",
+  "playlist" : "Playlist",
+  "genre" : "Genre",
+  "search": "Search...",
+  "playbackRecord": "Playback Records",
+  "musicPlayed": "Music Played",
+  "listeningTime": "Listening Time",
+  "album": "Albums",
+  "song" : "Songs",
+  "favourite" : "Favourite",
+  "feature": "Features",
+  "sleepTimer": "Sleep Timer",
+  "addWidget": "Add Widget",
+  "theme" : "Theme",
+  "setting": "Setting",
+  "feedback": "Feedback",
+  "rateUs": "Rate us",
+  "about": "About",
+  "times": "times",
+  "hour": "hr",
+  "minute": "min",
+  "second": "sec",
+  "songCount": "songs",
+  "albumCount": "albums",
+  "artistCount": "artists",
+  "albumAndSong": "{album} Albums , {song} Songs",
+  "@albumAndSong" : {
+    "description": "Album and Song",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "popularSong": "Popular Songs",
+  "newSong": "New Songs"
+
+
+}

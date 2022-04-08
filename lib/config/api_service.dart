@@ -15,7 +15,7 @@ class ApiService{
   static Future<List<Artist>> getArtistList() async {
     late List<Artist> lists = [];
     // var response = await Dio().get(UrlConfig.getArtistListUrl);
-    var response = await http.get(Uri.parse(UrlConfig.mongoGetArtistList));
+    var response = await http.get(Uri.parse(UrlConfig.getArtistListUrl));
     print('REsponse > ${response.body}');
 
     if (response.statusCode == 200) {
@@ -45,7 +45,7 @@ class ApiService{
   static Future<List<Playlist>> getAllPlaylist() async{
     late List<Playlist> playlists = [];
     
-    var response = await http.get(Uri.parse(UrlConfig.mongoGetAllPlaylist));
+    var response = await http.get(Uri.parse(UrlConfig.getAllPlaylist));
 
     if(response.statusCode == 200){
       var body = jsonDecode(response.body);
@@ -148,7 +148,7 @@ class ApiService{
   static Future<List<Genre>> getAllGenres() async{
     late List<Genre> genreList = [];
 
-    var response = await http.get(Uri.parse(UrlConfig.mongoGetAllGenre));
+    var response = await http.get(Uri.parse(UrlConfig.getAllGenres));
 
     if(response.statusCode == 200 ){
       var body = jsonDecode(response.body);

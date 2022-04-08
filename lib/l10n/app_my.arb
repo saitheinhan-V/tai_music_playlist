@@ -1,0 +1,48 @@
+{
+  "@@locale": "my",
+  "homeTitle" : "မူလစာမျက်နှာ",
+  "exploreTitle" : "စူးစမ်းရန်",
+  "moreTitle" : "အခြား",
+  "language": "ဘာသာစကား",
+  "myanmar" : "မြန်မာ",
+  "english" : "အင်္ဂလိပ်",
+  "artists" : "အနုပညာရှင်",
+  "playlist" : "စုစည်းမှု",
+  "genre" : "အမျိုးအစား",
+  "search": "ရှာရန်...",
+  "playbackRecord": "သီးချင်းနားဆင်မှုမှတ်တမ်း",
+  "musicPlayed": "သီချင်းဖွင့်မှတ်တမ်း",
+  "listeningTime": "သီချင်းနားဆင်ချိန်",
+  "album": "အယ်လ်ဘမ်",
+  "song" : "သီချင်း",
+  "favourite" : "စိတ်ကြိုက်",
+  "feature": "လုပ်ဆောင်မှုများ",
+  "sleepTimer": "ပိတ်ချိန်ချိန်စက်",
+  "addWidget": "ဖုန်းသို့ထည့်ရန်",
+  "theme" : "အရောင်ပြင်ဆင်ရန်",
+  "setting": "ပြင်ဆင်ရန်",
+  "feedback": "တုံပြန်ရန်",
+  "rateUs": "အဆင့်သတ်မှတ်ရန်",
+  "about" : "အကြောင်း",
+  "times": "ကြိမ်",
+  "hour": "နာရီ",
+  "minute": "မိနစ်",
+  "second": "စက္ကန့်",
+  "songCount": "ပုဒ်",
+  "albumCount": "ခု",
+  "artistCount": "ယောက်",
+  "albumAndSong": "အယ်လ်ဘမ် {album} ခု , သီချင်း {song} ပုဒ်",
+  "@albumAndSong" : {
+    "description": "Album and Song",
+    "placeholders": {
+      "album": {
+        "type": "String"
+      },
+      "song": {
+        "type": "String"
+      }
+    }
+  },
+  "popularSong": "လူကြိုက်များသော",
+  "newSong": "အသစ်ထွက်ရှိထားသော"
+}

@@ -9,6 +9,7 @@ import 'package:tai_music/ui/home/artist_page.dart';
 import 'package:tai_music/ui/home/genre_page.dart';
 import 'package:tai_music/ui/home/playlist_page.dart';
 import 'package:tai_music/ui/search/search.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 import '../../ant_icon.dart';
 
@@ -30,7 +31,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   late DateTime _lastPressed;
 
-  final List<String> categoryList = [];
+  late List<String> categoryList = [];
 
   final List<Widget> pages = [
     const ArtistPage(),
@@ -43,16 +44,12 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     // TODO: implement initState
     super.initState();
     // _categoryList.add('For You');
-    categoryList.add('Artists');
-    categoryList.add('Playlist');
-    categoryList.add('Genre');
+    // categoryList.add('Artists');
+    // categoryList.add('Playlist');
+    // categoryList.add('Genre');
     // _categoryList.add('Popular');
 
-    tabController = TabController(
-      initialIndex: 0,
-      length: categoryList.length,
-      vsync: this,
-    );
+
   }
 
   @override
@@ -95,6 +92,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
+    categoryList = [
+      L10n.of(context)?.artists ?? "Artist",
+      L10n.of(context)?.playlist ?? "Playlist",
+      L10n.of(context)?.genre ?? "Genre"
+    ];
+
+    tabController = TabController(
+      initialIndex: 0,
+      length: categoryList.length,
+      vsync: this,
+    );
 
     return WillPopScope(
       onWillPop: () async {
@@ -144,17 +153,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           color: Colors.grey.shade300,
                         ),
                         child: Row(
-                          children: const <Widget>[
-                            Icon(
+                          children:  <Widget>[
+                            const Icon(
                               Icons.search,
                               color: Colors.black26,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 10.0,
                             ),
                             Text(
-                              'Search...',
-                              style: TextStyle(
+                              L10n.of(context)?.search ?? "Search...",
+                              style: const TextStyle(
                                 color: Colors.black26,
                                 fontSize: 15.0,
                               ),
