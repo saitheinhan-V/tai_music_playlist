@@ -10,6 +10,7 @@ import 'package:tai_music/provider/audio_provider.dart';
 import 'package:tai_music/provider/provider.dart';
 import 'package:tai_music/ui/home/artist_detail_page.dart';
 import 'package:tai_music/ui/home/playlist_page.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 class ArtistPage extends StatefulWidget {
   const ArtistPage({Key? key}) : super(key: key);
@@ -143,7 +144,10 @@ class _ArtistPageState extends State<ArtistPage> {
                   );
                 },
                   title: Text(artistList[index].artistName),
-                  subtitle: const Text('1 Album, 20 songs'),
+                  subtitle:  Text(L10n.of(context)?.albumAndSong("1", "5") ?? "",
+                  style: const TextStyle(
+                    fontSize: 14.0
+                  ),),
                   leading: Card(
                     // shape: RoundedRectangleBorder(
                     //   borderRadius: BorderRadius.circular(10.0),
@@ -176,7 +180,8 @@ class _ArtistPageState extends State<ArtistPage> {
                               );
                             },
                             child: CachedNetworkImage(
-                              imageUrl: artistList[index].artistProfile,
+                              // imageUrl: artistList[index].artistProfile,
+                              imageUrl: 'http://res.cloudinary.com/dthfx8c4o/image/upload/v1649249703/g4ve9qmej2s0dcnb03fd.jpg',
                               progressIndicatorBuilder: (context, url, l) =>
                               const CircularProgressIndicator(),
                               fit: BoxFit.cover,

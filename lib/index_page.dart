@@ -1,3 +1,5 @@
+// import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/src/public_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
@@ -5,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:tai_music/model/user.dart';
+import 'package:tai_music/provider/language_provider.dart';
 import 'package:tai_music/provider/local_providers.dart';
 import 'package:tai_music/ui/chart/chart.dart';
 import 'package:tai_music/ui/custom_bottom_navigation/bottom_nav_bar_widget.dart';
@@ -13,6 +16,9 @@ import 'package:tai_music/ui/home/home.dart';
 import 'package:tai_music/ui/home/home_page.dart';
 import 'package:tai_music/ui/login/login_page.dart';
 import 'package:tai_music/ui/setting/setting.dart';
+import '../generated/locale_keys.g.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
+import 'package:tai_music/hook/use_l10n.dart';
 
 import 'ant_icon.dart';
 
@@ -75,6 +81,7 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
 
     final bottomBarState = Provider.of<BottomBarState>(context);
     final screensState = Provider.of<ScreensState>(context);
+    // final locale = L10n.of(context)!;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -99,23 +106,23 @@ class _IndexPageState extends State<IndexPage> with SingleTickerProviderStateMix
         // selectedFontSize: 15.0,
         onTap: (int index) {
           _pageController.jumpToPage(index);
-          },
+        },
         currentIndex: _selectedIndex,
-        items: const [
+        items:  [
           BottomNavigationBarItem(
-            icon: Icon(AntIcons.play_video),
-            label: 'Home',
-            activeIcon: Icon(AntIcons.play_video_fill),
+            icon: const Icon(AntIcons.play_video),
+            label: L10n.of(context)?.homeTitle ?? "Home",
+            activeIcon: const Icon(AntIcons.play_video_fill),
           ),
           BottomNavigationBarItem(
-            activeIcon: Icon(AntIcons.explore_fill),
-            label: 'Explore',
-            icon: Icon(AntIcons.explore),
+            activeIcon: const Icon(AntIcons.explore_fill),
+            label: L10n.of(context)?.exploreTitle ?? "Explore",
+            icon: const Icon(AntIcons.explore),
           ),
           BottomNavigationBarItem(
-            label: 'More',
-            activeIcon: Icon(Icons.settings_applications),
-            icon: Icon(Icons.settings_applications_outlined),
+            label: L10n.of(context)?.moreTitle ?? "More",
+            activeIcon: const Icon(Icons.settings_applications),
+            icon: const Icon(Icons.settings_applications_outlined),
           ),
         ],
       ),

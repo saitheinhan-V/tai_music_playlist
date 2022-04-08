@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tai_music/theme/theme_state.dart';
 import 'package:tai_music/utils/responsive.dart';
+import 'package:flutter_gen/gen_l10n/l10n.dart';
 
 class ChartPage extends StatefulWidget {
   const ChartPage({Key? key}) : super(key: key);
@@ -60,13 +61,13 @@ class _ChartPageState extends State<ChartPage> {
             children: <Widget>[
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 10.0),
-                child: const Text(
-                  'Popular Songs',
-                  style: TextStyle(fontSize: 20),
+                child:  Text(
+                  L10n.of(context)?.popularSong ?? 'Popular Songs',
+                  style: const TextStyle(fontSize: 20),
                 ),
               ),
               Container(
-                height: 380.0,
+                height: 400.0,
                 margin: const EdgeInsets.symmetric(horizontal: 5.0),
                 decoration: const BoxDecoration(
 
@@ -122,9 +123,9 @@ class _ChartPageState extends State<ChartPage> {
                 ),
               Container(
                 margin: const EdgeInsets.symmetric(vertical: 10.0),
-                child: const Text(
-                  'New Songs',
-                  style: TextStyle(fontSize: 20),
+                child:  Text(
+                  L10n.of(context)?.newSong ?? 'New Songs',
+                  style: const TextStyle(fontSize: 20),
                 ),
               ),
               Container(

@@ -1,6 +1,6 @@
 class UrlConfig {
 
-  static const String baseUrl = "http://192.168.60.182:5001";
+  static const String baseUrl = "http://192.168.60.183:3000";
 
   //using mysql local
 
@@ -28,6 +28,12 @@ class UrlConfig {
   static const String mongoGetAllPlaylist = '$baseUrl/api/mongo/list/playlist';
 
   static const String mongoGetAllGenre = '$baseUrl/api/mongo/list/genre';
+
+  static const String imageUploadBase64 = '$baseUrl/image/base64';
+
+  static const String imageUploadNormal = '$baseUrl/upload';
+
+  static const String imageUploadCloud = '$baseUrl/image/upload';
 
 
 }

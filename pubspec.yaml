@@ -51,6 +51,22 @@ dependencies:
   dio: ^4.0.4
   url_launcher: ^6.0.18
   step_progress_indicator: ^1.0.2
+  easy_localization: ^3.0.0
+  hooks_riverpod: ^1.0.0
+    # For Assets
+  flutter_gen_runner: ^4.0.1
+  build_runner: ^2.0.4
+  flutter_localizations:
+    sdk: flutter
+  localization: ^2.1.0
+  intl: ^0.17.0
+  flutter_hooks: ^0.18.0
+  image_picker: ^0.8.5
+  path_provider: ^2.0.8
+  permission_handler: ^9.2.0
+
+  #flutter_riverpod: ^1.0.0
+
 #  audioplayers: ^0.20.1
 
 #  path_provider: ^1.6.14
@@ -72,14 +88,10 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-
 # The following section is specific to Flutter.
 flutter:
-
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:
@@ -91,6 +103,7 @@ flutter:
     - assets/images/
     - assets/logo/
     - assets/audios/test.mp3
+    - assets/translations/
 
   fonts:
     - family: AntIcons

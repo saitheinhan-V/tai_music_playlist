@@ -2,8 +2,12 @@
     package="com.music.tai.pocket.tai_music_pocket">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
-   <application
+    <application
         android:label="Tai Music Playlist"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
